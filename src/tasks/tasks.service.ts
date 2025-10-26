@@ -14,8 +14,8 @@ export class TasksService {
   async getAllTasks(
     filter: GetTasksFilterDto,
   ): Promise<{ tasks: Task[]; tasksCount: number }> {
-    const tasksCount = await this.tasksRepository.getTasksCount(filter);
-    const tasks = await this.tasksRepository.getTasks(filter);
+    const { tasks, tasksCount } =
+      await this.tasksRepository.getTasksWithCount(filter);
     return { tasksCount, tasks };
   }
 
