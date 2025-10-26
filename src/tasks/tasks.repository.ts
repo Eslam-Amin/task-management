@@ -47,7 +47,7 @@ export const TasksRepository = (dataSource: DataSource) =>
     },
 
     async getTasksCount(filterDto: GetTasksFilterDto): Promise<number> {
-      const { status, search } = filterDto || {};
+      const { status, search } = filterDto;
       const query = this.createQueryBuilder('task');
 
       if (status) {
