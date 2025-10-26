@@ -19,24 +19,6 @@ export class TasksService {
     return { tasksCount, tasks };
   }
 
-  getTasksWithFilters(filter: GetTasksFilterDto): Promise<Task[]> {
-    const { status, search } = filter;
-    const query = this.tasksRepository.createQueryBuilder('task');
-
-    if (status) {
-      query.andWhere('task.status = :status', { status });
-    }
-
-    if (search) {
-      query.andWhere(
-        '(task.title LIKE :search OR task.description LIKE :search)',
-        { search: `%${search}%` },
-      );
-    }
-
-    return query.getMany();
-  }
-
   createTask(createTaskDto: CreateTaskDto): Promise<Task> {
     return this.tasksRepository.createTask(createTaskDto);
   }
