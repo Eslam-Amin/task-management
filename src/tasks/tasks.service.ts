@@ -32,13 +32,12 @@ export class TasksService {
   async updateTaskById(id: string, attrs: Partial<Task>): Promise<Task> {
     const task = await this.getTaskById(id);
     Object.assign(task, attrs);
-    return task;
+    return this.tasksRepository.save(task);
   }
 
   async updateTaskStatus(id: string, status: TaskStatus) {
-    const task = await this.getTaskById(id);
-    task.status = status;
-    return this.tasksRepository.save(task);
+    const task = await this.updateTaskById(id, { status });
+    return task;
   }
 
   async deleteTask(id: string): Promise<void> {
