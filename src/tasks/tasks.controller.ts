@@ -9,24 +9,35 @@ import {
   Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { Task, TaskStatus } from './task.model';
+import { TaskStatus } from './task-status.enum';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filte.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
+import { Task } from './task.entity';
+import { ApiResponse } from 'src/dto/api-response';
 
 @Controller({ path: 'tasks', version: '1' })
 export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
-  getTasks(@Query() filter: GetTasksFilterDto): Task[] {
-    if (Object.keys(filter))
-      return this.tasksService.getTasksWithFilters(filter);
-    return this.tasksService.getAllTasks();
+  async getTasks(
+    @Query() filter: GetTasksFilterDto,
+  ): Promise<ApiResponse<Task> | Task[]> {
+    const { tasks, tasksCount } = await this.tasksService.getAllTasks(filter);
+    return {
+      pagination: {
+        totalItems: tasksCount,
+        totalPages: Math.ceil(tasksCount / 10),
+        currentPage: 1,
+        itemsPerPage: 10,
+      },
+      data: tasks,
+    };
   }
 
   @Post()
-  createTask(@Body() body: CreateTaskDto) {
+  createTask(@Body() body: CreateTaskDto): Promise<Task> {
     return this.tasksService.createTask(body);
   }
 
@@ -36,24 +47,33 @@ export class TasksController {
   }
 
   @Patch('/:id')
-  updateTaskById(
+  async updateTaskById(
     @Param('id') id: string,
     @Body() body: Partial<CreateTaskDto>,
   ) {
-    return this.tasksService.updateTaskById(id, body);
+    const task = await this.tasksService.updateTaskById(id, body);
+    return {
+      message: 'Task updated successfully',
+      data: task,
+    };
   }
 
   @Patch('/:id/status')
-  updateTaskStatus(
+  async updateTaskStatus(
     @Param('id') id: string,
     @Body() updateTaskStatusDto: UpdateTaskStatusDto,
   ) {
     const { status } = updateTaskStatusDto;
-    return this.tasksService.updateTaskStatus(id, status);
+    const task = await this.tasksService.updateTaskStatus(id, status);
+    return {
+      message: ' Task status updated successfully',
+      data: task,
+    };
   }
 
   @Delete('/:id')
-  deleteTaskById(@Param('id') id: string) {
-    return this.tasksService.deleteTask(id);
+  async deleteTaskById(@Param('id') id: string) {
+    await this.tasksService.deleteTask(id);
+    return { message: 'Task deleted successfully', data: {} };
   }
 }
