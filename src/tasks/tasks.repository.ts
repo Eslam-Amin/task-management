@@ -34,6 +34,18 @@ export const TasksRepository = (dataSource: DataSource) =>
       return query.getMany();
     },
 
+    async getTasksWithCount(
+      filterDto: GetTasksFilterDto,
+    ): Promise<{ tasks: Task[]; tasksCount: number }> {
+      const tasks = await this.getTasks(filterDto);
+      const tasksCount = await this.getTasksCount(filterDto);
+
+      return {
+        tasks,
+        tasksCount,
+      };
+    },
+
     async getTasksCount(filterDto: GetTasksFilterDto): Promise<number> {
       const { status, search } = filterDto || {};
       const query = this.createQueryBuilder('task');
