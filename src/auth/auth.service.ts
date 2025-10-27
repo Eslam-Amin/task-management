@@ -5,7 +5,7 @@ import { User } from './user.entity';
 @Injectable()
 export class AuthService {
   constructor(@Inject('USERS_REPOSITORY') private usersRepository) {}
-  signUp(authCredentialsDto: AuthCredentialsDto): Promise<User> {
+  signUp(authCredentialsDto: AuthCredentialsDto): Promise<void | User> {
     return this.usersRepository.createUser(authCredentialsDto);
   }
 }
