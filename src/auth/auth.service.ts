@@ -11,19 +11,19 @@ export class AuthService {
     @Inject('USERS_REPOSITORY') private usersRepository,
     private jwtService: JwtService,
   ) {}
-  signUp(authCredentialsDto: AuthCredentialsDto): Promise<void | User> {
+  signUp(authCredentialsDto: AuthCredentialsDto): Promise<User> {
     return this.usersRepository.createUser(authCredentialsDto);
   }
 
   async signIn(
     authCredentialsDto: AuthCredentialsDto,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<{ accessToken: string; user?: User }> {
     const { username, password } = authCredentialsDto;
     const user = await this.usersRepository.findOne({ where: { username } });
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload: JwtPayload = { username };
       const accessToken: string = await this.jwtService.sign(payload);
-      return { accessToken };
+      return { accessToken, user };
     } else throw new UnauthorizedException('Invalid credentials');
   }
 }

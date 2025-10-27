@@ -8,9 +8,7 @@ import {
 } from '@nestjs/common';
 export const UsersRepository = (dataSource: DataSource) =>
   dataSource.getRepository(User).extend({
-    async createUser(
-      authCredentials: AuthCredentialsDto,
-    ): Promise<void | User> {
+    async createUser(authCredentials: AuthCredentialsDto): Promise<User> {
       const { username, password } = authCredentials;
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(password, salt);
