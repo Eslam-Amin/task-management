@@ -31,8 +31,12 @@ export class TasksController {
   @Get()
   async getTasks(
     @Query() filter: GetTasksFilterDto,
+    @GetUser() user: User,
   ): Promise<ApiResponse<Task> | Task[]> {
-    const { tasks, tasksCount } = await this.tasksService.getAllTasks(filter);
+    const { tasks, tasksCount } = await this.tasksService.getAllTasks(
+      filter,
+      user,
+    );
     return {
       pagination: {
         totalItems: tasksCount,
@@ -45,24 +49,33 @@ export class TasksController {
   }
 
   @Post()
-  createTask(
+  async createTask(
     @Body() body: CreateTaskDto,
     @GetUser() user: User,
-  ): Promise<Task> {
-    return this.tasksService.createTask(body, user);
+  ): Promise<ApiResponse<Task>> {
+    const task = await this.tasksService.createTask(body, user);
+    return {
+      message: 'Task created successfully',
+      data: task,
+    };
   }
 
   @Get('/:id')
-  getTaskById(@Param('id') id: string) {
-    return this.tasksService.getTaskById(id);
+  async getTaskById(@Param('id') id: string, @GetUser() user: User) {
+    const task = await this.tasksService.getTaskById(id, user);
+    return {
+      message: 'Task retrieved successfully',
+      data: task,
+    };
   }
 
   @Patch('/:id')
   async updateTaskById(
     @Param('id') id: string,
     @Body() body: Partial<CreateTaskDto>,
+    @GetUser() user: User,
   ) {
-    const task = await this.tasksService.updateTaskById(id, body);
+    const task = await this.tasksService.updateTaskById(id, user, body);
     return {
       message: 'Task updated successfully',
       data: task,
@@ -73,9 +86,10 @@ export class TasksController {
   async updateTaskStatus(
     @Param('id') id: string,
     @Body() updateTaskStatusDto: UpdateTaskStatusDto,
+    @GetUser() user: User,
   ) {
     const { status } = updateTaskStatusDto;
-    const task = await this.tasksService.updateTaskStatus(id, status);
+    const task = await this.tasksService.updateTaskStatus(id, user, status);
     return {
       message: ' Task status updated successfully',
       data: task,
@@ -83,8 +97,8 @@ export class TasksController {
   }
 
   @Delete('/:id')
-  async deleteTaskById(@Param('id') id: string) {
-    await this.tasksService.deleteTask(id);
+  async deleteTaskById(@Param('id') id: string, @GetUser() user: User) {
+    await this.tasksService.deleteTask(id, user);
     return { message: 'Task deleted successfully', data: {} };
   }
 }
