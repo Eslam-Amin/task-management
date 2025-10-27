@@ -24,5 +24,6 @@ async function bootstrap() {
   logger.verbose(
     'Application is running on port ' + (process.env.PORT ?? 5000),
   );
+  logger.verbose(`Application is running in ${process.env.STAGE} mode`);
 }
 bootstrap();
