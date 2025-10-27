@@ -19,7 +19,6 @@ export const TasksRepository = (dataSource: DataSource) => {
     },
 
     async getTasks(filterDto: GetTasksFilterDto, user: User): Promise<Task[]> {
-      console.log('🚀 ~ TasksRepository ~ user:', user);
       const { status, search } = filterDto;
       const query = this.createQueryBuilder('task').where({ user });
 
