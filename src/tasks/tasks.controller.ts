@@ -19,9 +19,12 @@ import { ApiResponse } from 'src/dto/api-response';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/auth/user.entity';
+import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { TaskDto } from './dto/task.dto';
 
 @Controller({ path: 'tasks', version: '1' })
 @UseGuards(AuthGuard())
+@Serialize(TaskDto)
 export class TasksController {
   constructor(private tasksService: TasksService) {}
 
