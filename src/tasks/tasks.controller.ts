@@ -8,6 +8,7 @@ import {
   Post,
   Query,
   UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { TaskStatus } from './task-status.enum';
@@ -27,7 +28,7 @@ import { TaskDto } from './dto/task.dto';
 @Serialize(TaskDto)
 export class TasksController {
   constructor(private tasksService: TasksService) {}
-
+  private logger = new Logger('TasksController');
   @Get()
   async getTasks(
     @Query() filter: GetTasksFilterDto,
@@ -36,6 +37,11 @@ export class TasksController {
     const { tasks, tasksCount } = await this.tasksService.getAllTasks(
       filter,
       user,
+    );
+    this.logger.verbose(
+      `User "${user.username}" retrieving all tasks. Filters: ${JSON.stringify(
+        filter,
+      )}`,
     );
     return {
       pagination: {
@@ -54,6 +60,11 @@ export class TasksController {
     @GetUser() user: User,
   ): Promise<ApiResponse<Task>> {
     const task = await this.tasksService.createTask(body, user);
+    this.logger.verbose(
+      `User "${user.username}" creating a new task. Data: ${JSON.stringify(
+        body,
+      )}`,
+    );
     return {
       message: 'Task created successfully',
       data: task,
