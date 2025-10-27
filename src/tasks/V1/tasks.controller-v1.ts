@@ -8,7 +8,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { TasksService } from './tasks.service-v1';
+import { TasksServiceV1 } from './tasks.service-v1';
 import { TaskStatus } from '../task-status.enum';
 import { CreateTaskDto } from '../dto/create-task.dto';
 import { GetTasksFilterDto } from '../dto/get-tasks-filte.dto';
@@ -16,8 +16,8 @@ import { UpdateTaskStatusDto } from '../dto/update-task-status.dto';
 import { Task } from '../task.entity';
 
 @Controller({ path: 'tasks', version: '1' })
-export class TasksController {
-  constructor(private tasksService: TasksService) {}
+export class TasksControllerV1 {
+  constructor(private tasksService: TasksServiceV1) {}
 
   @Get()
   getTasks(@Query() filter: GetTasksFilterDto): Task[] {
