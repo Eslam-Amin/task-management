@@ -7,6 +7,7 @@ import { User } from './user.entity';
 import { DataSource } from 'typeorm';
 import { UsersRepository } from './users.repository';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
@@ -26,7 +27,9 @@ import { JwtModule } from '@nestjs/jwt';
       inject: [DataSource],
       useFactory: (dataSource: DataSource) => UsersRepository(dataSource),
     },
+    JwtStrategy,
   ],
   controllers: [AuthController],
+  exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}
