@@ -11,11 +11,14 @@ export class AuthController {
   @Post('/signup')
   async signUp(
     @Body() authCredentialsDto: AuthCredentialsDto,
-  ): Promise<ApiResponse<User>> {
-    const user = await this.authService.signUp(authCredentialsDto);
-    return {
-      message: 'User created successfully',
-      data: user,
-    };
+  ): Promise<void | User | ApiResponse<User>> {
+    return await this.authService.signUp(authCredentialsDto);
+  }
+
+  @Post('/signin')
+  async signIn(
+    @Body() authCredentialsDto: AuthCredentialsDto,
+  ): Promise<string | ApiResponse<string>> {
+    return await this.authService.signIn(authCredentialsDto);
   }
 }
