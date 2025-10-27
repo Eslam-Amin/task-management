@@ -5,8 +5,8 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filte.dto';
 import { User } from 'src/auth/user.entity';
 
-export const TasksRepository = (dataSource: DataSource) =>
-  dataSource.getRepository(Task).extend({
+export const TasksRepository = (dataSource: DataSource) => {
+  return dataSource.getRepository(Task).extend({
     async createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
       const { title, description } = createTaskDto;
       const task = this.create({
@@ -18,9 +18,10 @@ export const TasksRepository = (dataSource: DataSource) =>
       return this.save(task);
     },
 
-    async getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
+    async getTasks(filterDto: GetTasksFilterDto, user: User): Promise<Task[]> {
+      console.log('🚀 ~ TasksRepository ~ user:', user);
       const { status, search } = filterDto;
-      const query = this.createQueryBuilder('task');
+      const query = this.createQueryBuilder('task').where({ user });
 
       if (status) {
         query.andWhere('task.status = :status', { status });
@@ -28,7 +29,7 @@ export const TasksRepository = (dataSource: DataSource) =>
 
       if (search) {
         query.andWhere(
-          '(task.title LIKE :search OR task.description LIKE :search)',
+          '(task.title ILIKE :search OR task.description ILIKE :search)',
           { search: `%${search}%` },
         );
       }
@@ -38,9 +39,10 @@ export const TasksRepository = (dataSource: DataSource) =>
 
     async getTasksWithCount(
       filterDto: GetTasksFilterDto,
+      user: User,
     ): Promise<{ tasks: Task[]; tasksCount: number }> {
-      const tasks = await this.getTasks(filterDto);
-      const tasksCount = await this.getTasksCount(filterDto);
+      const tasks = await this.getTasks(filterDto, user);
+      const tasksCount = await this.getTasksCount(filterDto, user);
 
       return {
         tasks,
@@ -48,9 +50,12 @@ export const TasksRepository = (dataSource: DataSource) =>
       };
     },
 
-    async getTasksCount(filterDto: GetTasksFilterDto): Promise<number> {
+    async getTasksCount(
+      filterDto: GetTasksFilterDto,
+      user: User,
+    ): Promise<number> {
       const { status, search } = filterDto;
-      const query = this.createQueryBuilder('task');
+      const query = this.createQueryBuilder('task').where({ user });
 
       if (status) {
         query.andWhere('task.status = :status', { status });
@@ -69,3 +74,4 @@ export const TasksRepository = (dataSource: DataSource) =>
       return this.find({ where: { status } });
     },
   });
+};
