@@ -3,15 +3,17 @@ import { Task } from './task.entity';
 import { TaskStatus } from './task-status.enum';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filte.dto';
+import { User } from 'src/auth/user.entity';
 
 export const TasksRepository = (dataSource: DataSource) =>
   dataSource.getRepository(Task).extend({
-    async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
+    async createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
       const { title, description } = createTaskDto;
       const task = this.create({
         title,
         description,
         status: TaskStatus.OPEN,
+        user,
       });
       return this.save(task);
     },
