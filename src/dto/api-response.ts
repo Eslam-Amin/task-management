@@ -6,5 +6,10 @@ export class ApiResponse<T> {
     itemsPerPage: number;
   };
   message?: string;
-  data: T | T[];
+  data:
+    | T
+    | T[]
+    | {
+        [key: string]: any;
+      };
 }
