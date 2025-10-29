@@ -35,6 +35,12 @@ describe('Tasks Service', () => {
     tasksRepository = module.get('TASKS_REPOSITORY');
   });
 
+  describe('Task Service Initialization', () => {
+    it('should be defined', () => {
+      expect(tasksService).toBeDefined();
+    });
+  });
+
   describe('Get Tasks', () => {
     it('calls tasksRepository.getTasks and returns the result', async () => {
       const mockResult = {
