@@ -1,9 +1,9 @@
 import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dtos/auth-credentials.dto';
-import { ApiResponse } from 'src/dto/api-response';
+import { ApiResponse } from '../dto/api-response';
 import { User } from './user.entity';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { Serialize } from '../interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 
 @Controller({ path: 'auth', version: '1' })
