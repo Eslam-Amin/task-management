@@ -4,7 +4,7 @@ import { Task } from './task.entity';
 import { TaskStatus } from './task-status.enum';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filte.dto';
-import { User } from 'src/auth/user.entity';
+import { User } from '../auth/user.entity';
 
 export const TasksRepository = (dataSource: DataSource) => {
   const logger = new Logger('TasksRepository', { timestamp: true });
